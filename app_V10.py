@@ -135,6 +135,12 @@ def generate_content(product_data, lang, verb_lvl, sk_google):
     - Stil: {verb_lvl}
     - SEO-Keywords: {sk_google}
 
+    REGELN (WICHTIG):
+    1. SPRACHE: Der gesamte Output (auch Überschriften) muss zwingend in {lang} sein.
+    2. STIL: Passe den Wortschatz an '{verb_lvl}' an, aber bleibe im Telegrammstil (kurze Phrasen, keine vollständigen Sätze, kein "Marketing-Bla-Bla").
+    3. FORMATIERUNG: Keine fettgedruckten Wörter (**fett**). Nur reiner Text.
+    4. STRUKTUR: Halte dich exakt an das Layout unten. Ändere die Reihenfolge nicht.
+
     === ERFORDERLICHE STRUKTUR (Halte dich genau daran) ===
     
     [Zeile 1: Vollständiger Produktname + Hauptmerkmal + Farbe]
@@ -152,18 +158,15 @@ def generate_content(product_data, lang, verb_lvl, sk_google):
     [Attributname (z.B. Maße)]: (B x H x T) [Wert]
 
     
-    === FAQ-BEREICH (SEO BOOST) ===
-    Erstelle einen FAQ-Bereich (Häufig gestellte Fragen) zur Verbesserung des Google-Rankings.
-    - Frage 1: (Sollte ein Keyword aus {sk_google} enthalten)
-      Antwort: (Kurz, konkret, max. 2 Sätze)
-    - Frage 2: (Bezüglich Anwendung oder Material)
-      Antwort: (Konkrete Antwort)
+=== FAQ (3 echte Anwenderfragen in {lang}) ===
+    Frage 1: [Frage zu Montage, Pflege oder Passform]
+    Antwort: [Sehr kurze, präzise Antwort]
     
-    === REGELN ===
-    1. Verwende keine Fettdruck (**Text**) im ersten Teil der Beschreibung (Zeilen 1-2 und Beschreibungsblock). Es soll wie reiner Text aussehen.
-    2. Behalte die Trennlinien "----------------------------------------" bei.
-    3. Extrahiere in den Abschnitten "Merkmale" und "Produktinformationen" nur harte Daten. Wenn Daten fehlen, schreibe "Keine Daten" oder überspringe die Zeile, erfinde nichts.
-    4. Der gesamte Text muss in der Sprache {lang} sein.
+    Frage 2: [Technische Frage]
+    Antwort: [Sehr kurze Antwort]
+
+    Frage 3: [Frage zum Material/Inhalt]
+    Antwort: [Sehr kurze Antwort]
     """
     try:
         response = st.session_state.openai_client.chat.completions.create(
@@ -358,3 +361,4 @@ if "generated_variants" in st.session_state and st.session_state["generated_vari
     if st.session_state["3_prompts"]:
 
         st.markdown(st.session_state["3_prompts"])
+
