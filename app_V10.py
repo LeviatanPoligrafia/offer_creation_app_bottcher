@@ -1,7 +1,7 @@
 import streamlit as st
 from bs4 import BeautifulSoup
 from openai import OpenAI
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 import os
 import re
 # from selenium import webdriver
@@ -357,4 +357,5 @@ if "generated_variants" in st.session_state and st.session_state["generated_vari
         st.rerun()
 
     if st.session_state["3_prompts"]:
+
         st.markdown(st.session_state["3_prompts"])
