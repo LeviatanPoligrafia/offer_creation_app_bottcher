@@ -292,7 +292,7 @@ with cols1.container(key="col1-insert"):
     #             st.rerun()
 
     # elif input_method == "Bild":
-    uploaded_file = st.file_uploader("Datei auswählen", type=["jpg", "jpeg", "png"], key="insert-image")
+    uploaded_file = st.file_uploader("Datei auswählen:", type=["jpg", "jpeg", "png"], key="insert-image")
     if st.button("Beschreibung basierend auf Bild generieren",key="button-1", icon=":material/photo_camera:"):
         if uploaded_file:
             with st.spinner("Analysiere Bild..."):
