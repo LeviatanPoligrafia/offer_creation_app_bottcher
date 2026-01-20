@@ -9,9 +9,12 @@ import re
 # from selenium.webdriver.support.ui import WebDriverWait
 # from selenium.webdriver.support import expected_conditions as EC
 # from selenium.webdriver.chrome.service import Service as ChromeService
+import pathlib
 
 
-
+with open('assets/styles.css') as f:
+    st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+    
 st.set_page_config(
     page_title="Angebotsgenerator",  
     page_icon="🧠",
@@ -246,16 +249,24 @@ def translate(text):
 
 
 # --- INTERFEJS ---
-st.title("App zur Erstellung von Auktionen 📝")
+pageTitle = st.container(key='page-title')
+column1, column2 = st.columns([2,1])
+cols1, cols2 = st.columns([1, 1], border=False)
 
-cols1, cols2 = st.columns([2, 1], border=True)
+with column1.container(key="col1-title"):
+    st.title('App zur Erstellung von Auktionen')
+
+with column2.container(key="col2"):
+    st.image("assets/img/logo.png", width = 200)
+
+# st.title("App zur Erstellung von Auktionen 📝")
 
 if st.session_state.get("clear_pd"):
     st.session_state["product_data"] = ""
     st.session_state["clear_pd"] = False
 
-with cols1:
-    st.header("1. Eingabedatenquellen")
+with cols1.container(key="col1-insert"):
+    st.header("1. Eingabedatenquellen",divider="rainbow",help="Wir platzieren den Hilfetext",text_alignment="center")
     # input_method = st.radio(
     #     "Wählen Sie die Eingabemethode:",
     #     ("Webseite", "Bild"),
@@ -281,8 +292,8 @@ with cols1:
     #             st.rerun()
 
     # elif input_method == "Bild":
-    uploaded_file = st.file_uploader("Datei auswählen", type=["jpg", "jpeg", "png"])
-    if st.button("Beschreibung basierend auf Bild generieren"):
+    uploaded_file = st.file_uploader("Datei auswählen", type=["jpg", "jpeg", "png"], key="insert-image")
+    if st.button("Beschreibung basierend auf Bild generieren",key="button-1", icon=":material/photo_camera:"):
         if uploaded_file:
             with st.spinner("Analysiere Bild..."):
                 desc = describe_image(uploaded_file)
@@ -295,6 +306,7 @@ with cols1:
         else:
             st.warning("Bitte laden Sie zuerst eine Datei hoch.")
 
+    st.divider()
     st.markdown("### Inhaltseditor")
     st.text_area(
         "Produktbeschreibung eingeben / bearbeiten:",
@@ -303,24 +315,28 @@ with cols1:
         placeholder="Beschreibung eingeben oder einfügen...",
     )
 
-    if st.button("Text löschen"):
+    if st.button("Text löschen",key="button-2", icon=":material/add_notes:"):
         st.session_state["clear_pd"] = True
         st.rerun()
 
-with cols2:
-    st.header("2. Personalisierungsparameter")
+with cols2.container(key="col2-insert"):
+    st.header("2. Personalisierungsparameter",divider="rainbow",help="Wir platzieren den Hilfetext",text_alignment="center")
 
     # Lista języków z nazwami po niemiecku
     st.session_state['target_language'] = st.selectbox(
         "Wählen Sie die Zielsprache:", 
-        ("Deutsch", "Polnisch", "Englisch", "Tschechisch", "Slowakisch", "Ungarisch", "Rumänisch", "Bulgarisch", "Französisch", "Italienisch", "Spanisch", "Schwedisch", "Niederländisch", "Ukrainisch")
+        ("Deutsch", "Polnisch", "Englisch", "Tschechisch", "Slowakisch", "Ungarisch", "Rumänisch", "Bulgarisch", "Französisch", "Italienisch", "Spanisch", "Schwedisch", "Niederländisch", "Ukrainisch"),
+        key="target-lang"
     )
+
+    st.divider()
     #marketplace_type = st.selectbox("Marktplatz wählen:", ('E-commerce', "Amazon", "Allegro", "Ebay"))
-    verb_lvl = st.selectbox("Wählen Sie den Schreibstil:", ('locker', 'werblich', 'professionell'))
-    st.session_state['sk_google'] = st.text_input('Keywords für Google eingeben:')
+    verb_lvl = st.selectbox("Wählen Sie den Schreibstil:", ('locker', 'werblich', 'professionell'),key="target-verb")
+    st.divider()
+    st.session_state['sk_google'] = st.text_input('Keywords für Google eingeben:', key="target-gogle")
 
 
-    if st.button("Auktionsinhalt generieren"):
+    if st.button("Auktionsinhalt generieren",key="button-3", icon=":material/hourglass_top:"):
         with st.spinner("Inhalte werden generiert..."):
             # Generujemy w wybranym języku (np. po Francusku)
             variants = generate_content(st.session_state["product_data"], st.session_state['target_language'], verb_lvl, st.session_state['sk_google'])
@@ -351,7 +367,7 @@ if "generated_variants" in st.session_state and st.session_state["generated_vari
             st.markdown(st.session_state["translation"])
 
     st.subheader("Prompts zur Bilderstellung")
-    if st.button("Prompts generieren"):
+    if st.button("Prompts generieren",key="button-4", icon=":material/quiz:"):
         with st.spinner("Erstelle Prompts..."):
             st.session_state["3_prompts"] = three_prompts(st.session_state["product_data"])
         st.rerun()
