@@ -171,7 +171,7 @@ def generate_content(product_data, lang, verb_lvl, sk_google):
     """
     try:
         response = st.session_state.openai_client.chat.completions.create(
-            model='gpt-4o',  
+            model='gpt-5.2',  
             messages=[
                 {"role": "system", "content": "Du bist ein Spezialist für SEO-Marketing auf verschiedenen Marktplätzen."},
                 {"role": "user", "content": prompt}
@@ -375,3 +375,4 @@ if "generated_variants" in st.session_state and st.session_state["generated_vari
     if st.session_state["3_prompts"]:
 
         st.markdown(st.session_state["3_prompts"])
+
