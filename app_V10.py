@@ -63,7 +63,6 @@ def describe_image(image_file):
                     ]
                 }
             ],
-            max_tokens=500
         )
 
         return response.choices[0].message.content.strip()
@@ -375,4 +374,5 @@ if "generated_variants" in st.session_state and st.session_state["generated_vari
     if st.session_state["3_prompts"]:
 
         st.markdown(st.session_state["3_prompts"])
+
 
