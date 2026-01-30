@@ -22,8 +22,8 @@ st.set_page_config(
 )
 
 
-if "openai_client" not in st.session_state:
-    st.session_state.openai_client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+#if "openai_client" not in st.session_state:
+#    st.session_state.openai_client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
 if "product_data" not in st.session_state:
     st.session_state["product_data"] = ""
@@ -129,6 +129,10 @@ def describe_image(image_file):
 #     }
 
 def generate_content(product_data, lang, verb_lvl, sk_google):
+
+    genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
+    model = genai.GenerativeModel('gemini-3.0-pro') 
+    
     prompt = f"""
     Du bist ein Spezialist für E-Commerce-Content. Deine Aufgabe ist es, eine Produktbeschreibung in einem streng definierten technischen Format zu erstellen.
     
@@ -168,18 +172,12 @@ def generate_content(product_data, lang, verb_lvl, sk_google):
     3. Extrahiere in den Abschnitten "Merkmale" und "Produktinformationen" nur harte Daten. Wenn Daten fehlen, schreibe "Keine Daten" oder überspringe die Zeile, erfinde nichts.
     4. Der gesamte Text muss in der Sprache {lang} sein.
     """
-    try:
-        response = st.session_state.openai_client.chat.completions.create(
-            model='gpt-5.2',  
-            messages=[
-                {"role": "system", "content": "Du bist ein Spezialist für SEO-Marketing auf verschiedenen Marktplätzen."},
-                {"role": "user", "content": prompt}
-            ]
-        )
-        return [choice.message.content.strip() for choice in response.choices] 
-    except Exception as e:
-        st.error(f"Fehler bei der Content-Generierung durch KI: {e}")
-        return None
+    content_request = [
+        "Du bist ein Spezialist für SEO-Marketing auf verschiedenen Marktplätzen.",
+        prompt 
+    ]
+    response = model.generate_content(content_request)
+    return [response.text]
   
 def three_prompts(opis):
     prompt = f"""
@@ -374,5 +372,6 @@ if "generated_variants" in st.session_state and st.session_state["generated_vari
     if st.session_state["3_prompts"]:
 
         st.markdown(st.session_state["3_prompts"])
+
 
 
