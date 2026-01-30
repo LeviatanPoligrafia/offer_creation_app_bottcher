@@ -10,6 +10,7 @@ import re
 # from selenium.webdriver.support import expected_conditions as EC
 # from selenium.webdriver.chrome.service import Service as ChromeService
 import pathlib
+import google.generativeai as genai
 
 
 with open('assets/styles.css') as f:
@@ -372,6 +373,7 @@ if "generated_variants" in st.session_state and st.session_state["generated_vari
     if st.session_state["3_prompts"]:
 
         st.markdown(st.session_state["3_prompts"])
+
 
 
 
