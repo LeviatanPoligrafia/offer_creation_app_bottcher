@@ -132,7 +132,7 @@ def describe_image(image_file):
 def generate_content(product_data, lang, verb_lvl, sk_google):
 
     genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
-    model = genai.GenerativeModel('gemini-3.0-pro') 
+    model = genai.GenerativeModel('gemini-3.0-pro-preview') 
     
     prompt = f"""
     Du bist ein Spezialist für E-Commerce-Content. Deine Aufgabe ist es, eine Produktbeschreibung in einem streng definierten technischen Format zu erstellen.
@@ -373,6 +373,7 @@ if "generated_variants" in st.session_state and st.session_state["generated_vari
     if st.session_state["3_prompts"]:
 
         st.markdown(st.session_state["3_prompts"])
+
 
 
 
