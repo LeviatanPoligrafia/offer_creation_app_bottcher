@@ -170,8 +170,9 @@ def generate_content(product_data, lang, verb_lvl, sk_google):
     === REGELN ===
     1. Verwende keine Fettdruck (**Text**) im ersten Teil der Beschreibung (Zeilen 1-2 und Beschreibungsblock). Es soll wie reiner Text aussehen.
     2. Behalte die Trennlinien "----------------------------------------" bei.
-    3. Extrahiere in den Abschnitten "Merkmale" und "Produktinformationen" nur harte Daten. Wenn Daten fehlen, schreibe "Keine Daten" oder überspringe die Zeile, erfinde nichts.
+    3. Extrahiere in den Abschnitten "Merkmale" und "Produktinformationen" nur harte Daten.
     4. Der gesamte Text muss in der Sprache {lang} sein.
+    5. WICHTIG: Verwende KEINE Markdown-Überschriften (kein # oder ## am Anfang der Zeilen). Der Text soll normaler Fließtext sein.
     """
     content_request = [
         "Du bist ein Spezialist für SEO-Marketing auf verschiedenen Marktplätzen.",
@@ -373,6 +374,7 @@ if "generated_variants" in st.session_state and st.session_state["generated_vari
     if st.session_state["3_prompts"]:
 
         st.markdown(st.session_state["3_prompts"])
+
 
 
 
