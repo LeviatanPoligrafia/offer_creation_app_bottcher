@@ -12,15 +12,15 @@ import re
 import pathlib
 import google.generativeai as genai
 
-
-with open('assets/styles.css') as f:
-    st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
-    
 st.set_page_config(
     page_title="Angebotsgenerator",  
     page_icon="🧠",
     layout='wide'
 )
+
+with open('assets/styles.css') as f:
+    st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+    
 
 
 #if "openai_client" not in st.session_state:
@@ -376,6 +376,7 @@ if "generated_variants" in st.session_state and st.session_state["generated_vari
     if st.session_state["3_prompts"]:
 
         st.markdown(st.session_state["3_prompts"])
+
 
 
 
