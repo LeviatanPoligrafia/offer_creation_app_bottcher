@@ -357,6 +357,8 @@ if "generated_variants" in st.session_state and st.session_state["generated_vari
     with col1:
         st.header("3. Ergebnisse")
         for i, content in enumerate(st.session_state["generated_variants"], 1):
+
+            clean_content = content.lstrip('#').strip()
             st.markdown(content)
 
     with col2:
@@ -374,6 +376,7 @@ if "generated_variants" in st.session_state and st.session_state["generated_vari
     if st.session_state["3_prompts"]:
 
         st.markdown(st.session_state["3_prompts"])
+
 
 
 
