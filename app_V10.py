@@ -359,7 +359,7 @@ if "generated_variants" in st.session_state and st.session_state["generated_vari
         for i, content in enumerate(st.session_state["generated_variants"], 1):
 
             clean_content = content.lstrip('#').strip()
-            st.markdown(clean_content)
+            st.text(clean_content)
 
     with col2:
         # Wyświetlamy tłumaczenie tylko jeśli język docelowy był inny niż Niemiecki
@@ -376,6 +376,7 @@ if "generated_variants" in st.session_state and st.session_state["generated_vari
     if st.session_state["3_prompts"]:
 
         st.markdown(st.session_state["3_prompts"])
+
 
 
 
