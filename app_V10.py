@@ -1,14 +1,10 @@
 import streamlit as st
 from bs4 import BeautifulSoup
 from openai import OpenAI
-#from dotenv import load_dotenv
 import os
 import re
-# from selenium import webdriver
-# from selenium.webdriver.common.by import By
-# from selenium.webdriver.support.ui import WebDriverWait
-# from selenium.webdriver.support import expected_conditions as EC
-# from selenium.webdriver.chrome.service import Service as ChromeService
+import json
+import requests
 import pathlib
 import google.generativeai as genai
 
@@ -21,10 +17,8 @@ st.set_page_config(
 with open('assets/styles.css') as f:
     st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
     
-
-
-#if "openai_client" not in st.session_state:
-#    st.session_state.openai_client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+if "openai_client" not in st.session_state:
+   st.session_state.openai_client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
 if "product_data" not in st.session_state:
     st.session_state["product_data"] = ""
@@ -43,6 +37,9 @@ if "3_prompts" not in st.session_state:
 
 if "sk_google" not in st.session_state:
     st.session_state["sk_google"] = ""
+    
+if "sk" not in st.session_state:
+    st.session_state["sk"] = ""
 
 # --- FUNKCJE ---
 
@@ -70,64 +67,6 @@ def describe_image(image_file):
     except Exception as e:
         st.error(f"Fehler bei der Bildanalyse: {e}")
         return None
-
-# def clean_text(raw_html):
-#     clean = BeautifulSoup(raw_html, "html.parser").get_text(separator=" ", strip=True)
-#     clean = re.sub(r'\s+', ' ', clean)
-#     return (clean[:10000].rsplit(" ", 1)[0] + "...") if len(clean) > 10000 else clean
-
-# def scrape_leviatan(url: str) -> dict:
-#     opts = webdriver.ChromeOptions()
-#     opts.add_argument("--headless=new")
-#     opts.add_argument("--no-sandbox")
-#     opts.add_argument("--disable-dev-shm-usage")
-#     opts.add_argument("--disable-gpu")
-#     opts.add_argument("--window-size=1920,1080")
-#     # Zmiana języka przeglądarki na niemiecki
-#     opts.add_argument("--lang=de-DE,de")
-#     opts.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-#                       "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36")
-#     opts.add_experimental_option("excludeSwitches", ["enable-automation"])
-#     opts.add_experimental_option("useAutomationExtension", False)
-
-#     if os.getenv("CHROME_BIN") or os.path.exists("/usr/bin/chromium"):
-#         opts.binary_location = os.getenv("CHROME_BIN", "/usr/bin/chromium")
-#         service = ChromeService(executable_path=os.getenv("CHROMEDRIVER", "/usr/bin/chromedriver"))
-#         driver = webdriver.Chrome(service=service, options=opts)
-#     else:
-#         driver = webdriver.Chrome(options=opts)
-
-#     try:
-#         driver.set_page_load_timeout(25)
-#         driver.get(url)
-
-#         WebDriverWait(driver, 20).until(
-#             EC.presence_of_all_elements_located(
-#                 (By.CSS_SELECTOR, ".tabs .nav-tabs a[role='tab'][aria-controls]")
-#             )
-#         )
-#         html = driver.page_source
-#     finally:
-#         driver.quit()
-
-#     soup = BeautifulSoup(html, "html.parser")
-
-#     h1 = soup.find("h1") or soup.find("title")
-#     title = clean_text(h1.get_text()) if h1 else "Keine Überschrift."
-
-#     def tab_text(label_part: str) -> str:
-#         a = soup.find("a", {"role": "tab"}, string=lambda s: s and label_part.lower() in s.lower())
-#         if not a or not a.has_attr("aria-controls"):
-#             return ""
-#         pane = soup.find(id=a["aria-controls"])
-#         return clean_text(pane.decode_contents()) if pane else ""
-
-#     return {
-#         "title": title,
-#         "Opis produktu": tab_text("Opis") or tab_text("Beschreibung"), 
-#         "Opis karty produktu": tab_text("Karta") or tab_text("Datenblatt"),
-#         "Detale": tab_text("Detale") or tab_text("Details"),
-#     }
 
 def generate_content(product_data, lang, verb_lvl, sk_google):
 
@@ -246,6 +185,12 @@ def translate(text):
         st.error(f"Fehler bei der KI-Generierung: {e}")
         return None
 
+def get_google_suggestions(keyword, language_code, country_code):
+    url = f"http://suggestqueries.google.com/complete/search?client=chrome&q={keyword}&hl={language_code}&gl={country_code}"
+    response = requests.get(url)
+    suggestions = json.loads(response.text)[1]
+    return suggestions
+
 
 # --- INTERFEJS ---
 pageTitle = st.container(key='page-title')
@@ -266,31 +211,7 @@ if st.session_state.get("clear_pd"):
 
 with cols1.container(key="col1-insert"):
     st.header("1. Eingabedatenquellen",divider="rainbow",help="Wir platzieren den Hilfetext",text_alignment="center")
-    # input_method = st.radio(
-    #     "Wählen Sie die Eingabemethode:",
-    #     ("Webseite", "Bild"),
-    #     key="input_method",
-    # )
 
-    # if input_method == "Webseite":
-    #     url = st.text_input("Geben Sie die URL der Produktseite ein:")
-    #     if st.button("Seite durchsuchen 🔎"):
-    #         scraped_data = scrape_leviatan(url)
-    #         if scraped_data:
-    #             scraped_text = "\n\n".join([
-    #                 scraped_data["title"],
-    #                 scraped_data["Opis produktu"],
-    #                 "Produktkartenbeschreibung:",
-    #                 scraped_data["Opis karty produktu"],
-    #                 scraped_data["Detale"],
-    #             ])
-    #             base = st.session_state["product_data"].rstrip()
-    #             st.session_state["product_data"] = (base + ("\n\n" if base else "") + scraped_text)
-    #             st.session_state["scraped_done"] = True
-    #             st.success("Daten von der Seite abgerufen ✅")
-    #             st.rerun()
-
-    # elif input_method == "Bild":
     uploaded_file = st.file_uploader("Datei auswählen:", type=["jpg", "jpeg", "png"], key="insert-image")
     if st.button("Beschreibung basierend auf Bild generieren",key="button-1", icon=":material/photo_camera:"):
         if uploaded_file:
@@ -334,6 +255,11 @@ with cols2.container(key="col2-insert"):
     st.divider()
     st.session_state['sk_google'] = st.text_input('Keywords für Google eingeben:', key="target-gogle")
 
+    sk_finder = st.text_input(f"Geben Sie den Produktnamen ein, um nach Schlüsselwörtern zu suchen")
+    if st.button("Suchen"):
+        st.session_state['sk'] = get_google_suggestions(sk_finder, 'de','de')
+    st.text(st.session_state['sk'])
+
 
     if st.button("Auktionsinhalt generieren",key="button-3", icon=":material/hourglass_top:"):
         with st.spinner("Inhalte werden generiert..."):
@@ -376,6 +302,7 @@ if "generated_variants" in st.session_state and st.session_state["generated_vari
     if st.session_state["3_prompts"]:
 
         st.markdown(st.session_state["3_prompts"])
+
 
 
 
