@@ -200,9 +200,6 @@ cols1, cols2 = st.columns([1, 1], border=False)
 with column1.container(key="col1-title"):
     st.title('App zur Erstellung von Auktionen')
 
-with column2.container(key="col2"):
-    st.image("assets/img/logo.png", width = 200)
-
 # st.title("App zur Erstellung von Auktionen 📝")
 
 if st.session_state.get("clear_pd"):

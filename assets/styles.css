@@ -122,5 +122,10 @@ label, label p {
     border-radius: 9999px;
     background: linear-gradient(to right, rgb(255, 75, 75), rgb(255, 164, 33), rgb(250, 202, 43), rgb(33, 195, 84), rgb(28, 131, 225), rgb(128, 61, 245));
 }
+.stText span {
+    font-size: 1.2rem;
+    color: black;
+    font-weight: normal;
+}
 
 
